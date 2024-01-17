@@ -1,7 +1,6 @@
 package service
 
 import (
-	"commune/internal/domain/message"
 	"commune/internal/repository"
 )
 
@@ -13,5 +12,5 @@ type Service struct {
 }
 
 func NewService(repos *repository.Repository) *Service {
-	return &Service{Message: message.NewService(*repos.Message)}
+	return &Service{Message: NewMessageService(repos.Message)}
 }

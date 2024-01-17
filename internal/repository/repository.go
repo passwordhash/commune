@@ -1,18 +1,16 @@
 package repository
 
 import (
-	"commune/internal/domain/message"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Message interface {
-	Get()
 }
 
 type Repository struct {
-	Message *message.Repository
+	Message *MessageRepository
 }
 
 func NewRepository(db *mongo.Client) *Repository {
-	return &Repository{Message: message.NewRepository(db)}
+	return &Repository{Message: NewMessageMongo(db)}
 }

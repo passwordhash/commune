@@ -24,8 +24,8 @@ func main() {
 		logrus.Fatalln("connection to mongo db failed")
 	}
 
-	repositories := repository.NewRepository(mongoDB)
-	services := service.NewService(repositories)
+	repos := repository.NewRepository(mongoDB)
+	services := service.NewService(repos)
 	handlers := handler.NewHandler(hub, services)
 
 	srv := new(server.Server)
