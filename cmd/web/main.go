@@ -1,8 +1,11 @@
 package main
 
 import (
-	"commune"
 	"commune/internal/handler"
+	"commune/internal/repository"
+	"commune/internal/service"
+	"commune/internal/websocket"
+	pkgRepo "commune/pkg/repository"
 	"commune/pkg/server"
 	"flag"
 	"github.com/sirupsen/logrus"
@@ -12,21 +15,18 @@ import (
 
 func main() {
 	flag.Parse()
-	//mongo, err := repository.NewMongoDB()
-	//if err != nil {
-	//	log.Fatal("mongo err: ", err)
-	//}
-	//defer mongo.Disconnect(ctx)
-	//
-	//db := mongo.Database("commune")
-	//_ = db.Collection("users")
 
-	hub := commune.NewHub()
+	hub := websocket.NewHub()
 	go hub.Run()
 
-	handlers := &handler.Handler{
-		Hub: hub,
+	mongoDB, err := pkgRepo.NewMongoDB(pkgRepo.ConnectURI)
+	if err != nil {
+		logrus.Fatalln("connection to mongo db failed")
 	}
+
+	repositories := repository.NewRepository(mongoDB)
+	services := service.NewService(repositories)
+	handlers := handler.NewHandler(hub, services)
 
 	srv := new(server.Server)
 	if err := srv.Run("8090", handlers.InitRoutes()); err != nil {

@@ -7,13 +7,13 @@ import (
 )
 
 // TODO: move to config
-const connectURI = "mongodb://passwordhash:root@localhost:27017/"
+const ConnectURI = "mongodb://passwordhash:root@localhost:27017/"
 
-func NewMongoDB() (*mongo.Client, error) {
+func NewMongoDB(uri string) (*mongo.Client, error) {
 	//ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	ctx := context.TODO()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectURI))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package commune
+package websocket
 
 type Message struct {
 	data []byte
