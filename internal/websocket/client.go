@@ -2,6 +2,9 @@ package websocket
 
 import (
 	"bytes"
+	"commune/internal/entity"
+	"commune/internal/service"
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -45,6 +48,9 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	// Buffered channel of messages to save.
+	save chan []byte
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -52,7 +58,7 @@ type Client struct {
 // The application runs readPump in a per-connection goroutine. The application
 // ensures that there is at most one reader on a connection by executing all
 // reads from this goroutine.
-func (s *Subscription) readPump() {
+func (s *Subscription) readPump(service service.Service) {
 	c := s.client
 	defer func() {
 		c.hub.unregister <- *s
@@ -62,15 +68,31 @@ func (s *Subscription) readPump() {
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
 	c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, msg, err := c.ws.ReadMessage()
+		_, readed, err := c.ws.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				logrus.Errorln("error: %v", err)
 			}
 			break
 		}
-		msg = bytes.TrimSpace(bytes.Replace(msg, newline, space, -1))
-		message := Message{msg, s.room}
+
+		readed = bytes.TrimSpace(bytes.Replace(readed, newline, space, -1))
+
+		ms := entity.NewMessage(string(readed))
+
+		//if _, err = service.Create(m); err != nil {
+		//	logrus.Errorln(err)
+		//	return
+		//}
+
+		marshaledMsg, err := json.Marshal(ms)
+		if err != nil {
+			logrus.Error(err)
+			return
+		}
+
+		message := Message{marshaledMsg, s.room}
+
 		c.hub.broadcast <- message
 	}
 }
@@ -123,7 +145,7 @@ func (s *Subscription) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, room string) {
+func ServeWs(hub *Hub, services service.Service, w http.ResponseWriter, r *http.Request, room string) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		logrus.Fatalln(err)
@@ -136,5 +158,6 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, room string) {
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go subscription.writePump()
-	go subscription.readPump()
+	go subscription.readPump(services)
+
 }

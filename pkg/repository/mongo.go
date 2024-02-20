@@ -9,7 +9,7 @@ import (
 // TODO: move to config
 const ConnectURI = "mongodb://passwordhash:root@localhost:27017/"
 
-func NewMongoDB(uri string) (*mongo.Client, error) {
+func NewMongoDB(uri string) (*mongo.Database, error) {
 	//ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	ctx := context.TODO()
 
@@ -23,5 +23,8 @@ func NewMongoDB(uri string) (*mongo.Client, error) {
 		return nil, err
 	}
 
-	return client, nil
+	// TODO db name in config
+	db := client.Database("commune")
+
+	return db, nil
 }

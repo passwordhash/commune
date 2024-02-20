@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            width: 70%;
+            margin: auto;
+            margin-top: 5%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        .message {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .message .timestamp {
+            font-size: 0.8em;
+            color: #888;
+        }
+        .message.author {
+            background-color: #d9f7ff;
+            color: #333;
+            align-self: flex-end;
+            order: 1;
+        }
+        .message.user {
+            background-color: #fff;
+            color: #333;
+            align-self: flex-start;
+            order: 0;
+        }
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .input-container textarea {
+            width: 85%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        .input-container button {
+            min-width: 100px;
+            width: 10%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="message-container">
+<!--            <div class="message user">-->
+<!--                <p>Привет, как дела?</p>-->
+<!--                <p class="timestamp">Пользователь, 14:04</p>-->
+<!--            </div>-->
+<!--            <div class="message author">-->
+<!--                <p>Привет! У меня все отлично, спасибо!</p>-->
+<!--                <p class="timestamp">Автор, 14:05</p>-->
+<!--            </div>-->
+        </div>
+        <div class="input-container">
+            <textarea id="input" placeholder="Введите ваше сообщение..."></textarea>
+            <button id="send">Отправить</button>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function createMessage(msg) {
+        let div = document.createElement("div")
+        div.classList.add("message", "user")
+
+        let pText = document.createElement("p")
+        pText.innerText = msg.text
+
+        let pDate = document.createElement("p")
+        pDate.classList.add("timestamp")
+        pDate.innerText = new Date(msg.date)
+
+        div.appendChild(pText)
+        div.appendChild(pDate)
+
+        return div
+    }
+    async function start(chat) {
+        let resp = await fetch("http://localhost:8090/api/list")
+
+        let messages = await resp.json()
+
+        messages.forEach((msg) => {
+            chat.appendChild(createMessage(msg))
+        })
+    }
+
+    let chatContainer = document.querySelector(".message-container")
+
+    let textInput = document.querySelector("#input")
+    let sendBtn = document.querySelector("#send")
+
+    start(chatContainer)
+
+    let ws = new WebSocket("ws://localhost:8090/ws/golang")
+
+    ws.onmessage = function (msg) {
+        data = JSON.parse(msg.data)
+        chatContainer.appendChild(createMessage(data))
+    }
+
+    sendBtn.onclick = function (e) {
+        if (textInput.value === "") {
+            return
+        }
+
+        ws.send(textInput.value)
+        textInput.value = ""
+}
+
+</script>
+
+</html>
+

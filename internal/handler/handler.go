@@ -18,11 +18,31 @@ func NewHandler(hub *websocket.Hub, services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	app := gin.New()
 
+	app.Use(CORSMiddleware())
+
+	app.GET("/chat", func(c *gin.Context) {
+		c.File("./index.html")
+	})
+
 	app.GET("/ws/:room", func(c *gin.Context) {
 		room := c.Param("room")
 
-		websocket.ServeWs(h.hub, c.Writer, c.Request, room)
+		websocket.ServeWs(h.hub, *h.services, c.Writer, c.Request, room)
 	})
+
+	auth := app.Group("/auth")
+	{
+		auth.POST("/sign-up", h.SignUp)
+		auth.POST("/sign-in", h.LogIn)
+	}
+
+	api := app.Group("/api")
+	{
+		api.POST("/new", h.Create)
+		api.GET("/list", h.Get)
+		api.GET("/message/:ID", h.Get)
+
+	}
 
 	return app
 }
