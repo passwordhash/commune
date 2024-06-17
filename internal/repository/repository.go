@@ -13,7 +13,7 @@ const (
 type User interface {
 	Create(u entity.User) (entity.ObjectID, error)
 	GetById(id entity.ObjectID) (entity.User, error)
-	GetByPassphrase(p string) (entity.User, error)
+	GetByEmail(email string) (entity.User, error)
 	GetAll() ([]entity.User, error)
 }
 

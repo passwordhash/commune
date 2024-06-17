@@ -37,10 +37,10 @@ func (r *UserRepository) GetById(id entity.ObjectID) (entity.User, error) {
 	return user, err
 }
 
-func (r *UserRepository) GetByPassphrase(p string) (entity.User, error) {
+func (r *UserRepository) GetByEmail(email string) (entity.User, error) {
 	var user entity.User
 
-	cur := r.userC.FindOne(context.TODO(), bson.M{"passphrase": p})
+	cur := r.userC.FindOne(context.TODO(), bson.M{"email": email})
 	if cur.Err() != nil {
 		return user, cur.Err()
 	}

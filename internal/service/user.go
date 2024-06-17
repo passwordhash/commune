@@ -4,8 +4,10 @@ import (
 	"commune/internal/entity"
 	"commune/internal/repository"
 	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"math/rand"
 	"time"
 )
 
@@ -36,30 +38,49 @@ func NewUserService(userRepo repository.User, deps Deps) *UserService {
 	}
 }
 
-func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, error) {
-	condidate, _ := s.userRepo.GetByPassphrase(u.Email)
+func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passcode, error) {
+	condidate, _ := s.userRepo.GetByEmail(u.Email)
 	if !condidate.IsEmpty() {
-		return "", UserAlreadyExists
+		return "", "", UserAlreadyExists
+	}
+
+	passcode, err := s.GeneratePasscode()
+	if err != nil {
+		return "", "", err
 	}
 
 	user := entity.User{
 		ID:        entity.NewObjectId(),
 		Nickname:  u.Nickname,
-		Passcode:  u.Email,
+		Email:     u.Email,
+		Passcode:  entity.Passcode(passcode),
 		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
 	}
 
-	_, err := s.userRepo.Create(user)
+	_, err = s.userRepo.Create(user)
 	if err != nil {
-		return "", UserCreationError
+		return "", "", UserCreationError
 	}
 
 	token, err := s.GenerateToken(user)
 	if err != nil {
-		return "", AccessTokenCreationError
+		return "", "", AccessTokenCreationError
 	}
 
-	return token, nil
+	return token, passcode, nil
+}
+
+func (s *UserService) GeneratePasscode() (entity.Passcode, error) {
+	b := make([]byte, 3)
+
+	src := rand.NewSource(time.Now().Unix())
+	r := rand.New(src)
+
+	_, err := r.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return entity.Passcode(fmt.Sprintf("%x", b)), nil
 }
 
 func (s *UserService) GetById(id entity.ObjectID) (entity.User, error) {
@@ -71,17 +92,18 @@ func (s *UserService) GetAll() ([]entity.User, error) {
 }
 
 func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.JWTToken, error) {
-	var token entity.JWTToken
+	//var token entity.JWTToken
 
-	user, err := s.userRepo.GetByPassphrase(credentials.Passcode)
-	if user.Nickname != credentials.Nickname {
-		return token, UserNotFound
-	}
-	if err != nil {
-		return token, UserNotFound
-	}
+	//user, err := s.userRepo.GetByPassphrase(credentials.Passcode)
+	//if user.Nickname != credentials.Nickname {
+	//	return token, UserNotFound
+	//}
+	//if err != nil {
+	//	return token, UserNotFound
+	//}
 
-	return s.newAccessToken(user)
+	//return s.newAccessToken(user)
+	return "", nil
 }
 
 type tokenClaims struct {

@@ -7,8 +7,8 @@ import (
 )
 
 type User interface {
-	// TODO: return jwt
-	SignUp(u entity.UserCreate) (entity.JWTToken, error)
+	SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passcode, error)
+	GeneratePasscode() (entity.Passcode, error)
 	GetById(id entity.ObjectID) (entity.User, error)
 	GetAll() ([]entity.User, error)
 
@@ -24,7 +24,7 @@ type Message interface {
 }
 
 type Email interface {
-	SendCode(to string, passcode string) error
+	SendCode(to string, passcode entity.Passcode) error
 }
 
 type Service struct {

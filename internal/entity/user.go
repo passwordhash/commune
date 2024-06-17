@@ -8,8 +8,9 @@ import (
 type User struct {
 	ID       ObjectID `bson:"_id"`
 	Nickname string   `bson:"nickname"`
+	Email    string   `bson:"email"`
 	// TODO validation
-	Passcode  string             `bson:"passcode"`
+	Passcode  Passcode           `bson:"passcode"`
 	CreatedAt primitive.DateTime `bson:"createdAt"`
 }
 
@@ -23,8 +24,8 @@ type UserCreate struct {
 }
 
 type UserAuth struct {
-	Nickname string `json:"nickname" binding:"required"`
-	Passcode string `json:"passcode" binding:"required"`
+	Nickname string   `json:"nickname" binding:"required"`
+	Passcode Passcode `json:"passcode" binding:"required"`
 }
 
 type UserResponse struct {
@@ -35,3 +36,4 @@ type UserResponse struct {
 }
 
 type JWTToken string
+type Passcode string

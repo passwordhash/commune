@@ -1,6 +1,7 @@
 package service
 
 import (
+	"commune/internal/entity"
 	"crypto/tls"
 	"gopkg.in/gomail.v2"
 )
@@ -15,7 +16,7 @@ func NewEmailService(deps EmailDeps) *EmailService {
 	}
 }
 
-func (s *EmailService) SendCode(to string, passcode string) error {
+func (s *EmailService) SendCode(to string, passcode entity.Passcode) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", s.D.From)
 	m.SetHeader("To", to)
@@ -29,8 +30,8 @@ func (s *EmailService) SendCode(to string, passcode string) error {
 	return d.DialAndSend(m)
 }
 
-func (s *EmailService) getEmailTemplate(passcode string) string {
-	return `
+func (s *EmailService) getEmailTemplate(passcode entity.Passcode) string {
+	return string(`
 	<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -97,7 +98,7 @@ func (s *EmailService) getEmailTemplate(passcode string) string {
         <i class="fas fa-comments icon"></i>
         <h1>Commune - общайтесь без границ</h1>
         <p>Ваш код для входа в аккаунт:</p>
-        <div class="code">` + passcode + `</div>
+        <div class="code">` + passcode[0:len(passcode)/2] + ` ` + passcode[len(passcode)/2:] + `</div>
         <p>Введите этот код на сайте, чтобы продолжить.</p>
     </div>
     <div class="footer">
@@ -107,5 +108,5 @@ func (s *EmailService) getEmailTemplate(passcode string) string {
 </body>
 </html>
 
-`
+`)
 }
