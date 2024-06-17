@@ -36,11 +36,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.LogIn)
 	}
 
+	app.GET("/test-email/:email", h.TestEmail)
+
 	api := app.Group("/api")
 	{
 		api.POST("/new", h.Create)
+		api.GET("/message/:ID", h.GetById)
 		api.GET("/list", h.Get)
-		api.GET("/message/:ID", h.Get)
 
 	}
 

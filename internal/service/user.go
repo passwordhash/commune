@@ -37,16 +37,16 @@ func NewUserService(userRepo repository.User, deps Deps) *UserService {
 }
 
 func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, error) {
-	condidate, _ := s.userRepo.GetByPassphrase(u.Passphrase)
+	condidate, _ := s.userRepo.GetByPassphrase(u.Email)
 	if !condidate.IsEmpty() {
 		return "", UserAlreadyExists
 	}
 
 	user := entity.User{
-		ID:         entity.NewObjectId(),
-		Name:       u.Name,
-		Passphrase: u.Passphrase,
-		CreatedAt:  primitive.NewDateTimeFromTime(time.Now()),
+		ID:        entity.NewObjectId(),
+		Nickname:  u.Nickname,
+		Passcode:  u.Email,
+		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
 	}
 
 	_, err := s.userRepo.Create(user)
@@ -73,8 +73,8 @@ func (s *UserService) GetAll() ([]entity.User, error) {
 func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.JWTToken, error) {
 	var token entity.JWTToken
 
-	user, err := s.userRepo.GetByPassphrase(credentials.Passphrase)
-	if user.Name != credentials.Name {
+	user, err := s.userRepo.GetByPassphrase(credentials.Passcode)
+	if user.Nickname != credentials.Nickname {
 		return token, UserNotFound
 	}
 	if err != nil {

@@ -23,19 +23,36 @@ type Message interface {
 	Create(m entity.Message) (entity.ObjectID, error)
 }
 
+type Email interface {
+	SendCode(to string, passcode string) error
+}
+
 type Service struct {
 	User
 	Message
+	Email
 }
 
 type Deps struct {
 	PassphraseSalt string
 	AccessTokenTTL time.Duration
 	SigingKey      string
+
+	EmailDeps
+}
+
+type EmailDeps struct {
+	SmtpHost string
+	SmtpPort int
+
+	From     string
+	Password string
 }
 
 func NewService(repos *repository.Repository, deps Deps) *Service {
 	return &Service{
 		User:    NewUserService(repos.User, deps),
-		Message: NewMessageService(repos.Message)}
+		Message: NewMessageService(repos.Message),
+		Email:   NewEmailService(deps.EmailDeps),
+	}
 }

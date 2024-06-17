@@ -45,6 +45,12 @@ func main() {
 		AccessTokenTTL: viper.GetDuration("auth.accessTokenTTL"),
 		SigingKey:      os.Getenv("SIGING_KEY"),
 		PassphraseSalt: os.Getenv("PASSWORD_SALT"),
+		EmailDeps: service.EmailDeps{
+			SmtpHost: config.smtpHost,
+			SmtpPort: config.smtpPort,
+			From:     config.from,
+			Password: os.Getenv("SMTP_PASSWORD"),
+		},
 	})
 	handlers := handler.NewHandler(hub, services)
 
@@ -59,9 +65,23 @@ func main() {
 
 type Config struct {
 	Port string
+
+	// For email
+	smtpHost string
+	smtpPort int
+	from     string
 }
 
 func LoadConfig() Config {
 	port := viper.GetString("http.port")
-	return Config{Port: port}
+
+	stmpHost := viper.GetString("email.smtpHost")
+	smtpPort := viper.GetInt("email.smtpPort")
+	from := viper.GetString("email.from")
+	return Config{
+		Port:     port,
+		smtpPort: smtpPort,
+		smtpHost: stmpHost,
+		from:     from,
+	}
 }
