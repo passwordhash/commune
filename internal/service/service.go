@@ -34,7 +34,7 @@ type Service struct {
 }
 
 type Deps struct {
-	PassphraseSalt string
+	PasscodeSalt   string
 	AccessTokenTTL time.Duration
 	SigingKey      string
 

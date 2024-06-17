@@ -44,7 +44,7 @@ func main() {
 	services := service.NewService(repos, service.Deps{
 		AccessTokenTTL: viper.GetDuration("auth.accessTokenTTL"),
 		SigingKey:      os.Getenv("SIGING_KEY"),
-		PassphraseSalt: os.Getenv("PASSWORD_SALT"),
+		PasscodeSalt:   os.Getenv("PASSWORD_SALT"),
 		EmailDeps: service.EmailDeps{
 			SmtpHost: config.smtpHost,
 			SmtpPort: config.smtpPort,

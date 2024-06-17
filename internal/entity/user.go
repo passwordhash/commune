@@ -24,7 +24,7 @@ type UserCreate struct {
 }
 
 type UserAuth struct {
-	Nickname string   `json:"nickname" binding:"required"`
+	Email    string   `json:"email" binding:"required"`
 	Passcode Passcode `json:"passcode" binding:"required"`
 }
 

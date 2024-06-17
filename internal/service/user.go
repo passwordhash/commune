@@ -3,6 +3,7 @@ package service
 import (
 	"commune/internal/entity"
 	"commune/internal/repository"
+	"commune/pkg/auth"
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
@@ -24,7 +25,7 @@ var (
 type UserService struct {
 	userRepo repository.User
 
-	passphraseSalt string
+	passcodeSalt   string
 	accessTokenTTL time.Duration
 	sigingKey      string
 }
@@ -32,7 +33,7 @@ type UserService struct {
 func NewUserService(userRepo repository.User, deps Deps) *UserService {
 	return &UserService{
 		userRepo:       userRepo,
-		passphraseSalt: deps.PassphraseSalt,
+		passcodeSalt:   deps.PasscodeSalt,
 		accessTokenTTL: deps.AccessTokenTTL,
 		sigingKey:      deps.SigingKey,
 	}
@@ -48,12 +49,13 @@ func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passc
 	if err != nil {
 		return "", "", err
 	}
+	hashedPasscode := auth.GeneratePasswordHash(string(passcode), s.passcodeSalt)
 
 	user := entity.User{
 		ID:        entity.NewObjectId(),
 		Nickname:  u.Nickname,
 		Email:     u.Email,
-		Passcode:  entity.Passcode(passcode),
+		Passcode:  entity.Passcode(hashedPasscode),
 		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
 	}
 
@@ -92,18 +94,18 @@ func (s *UserService) GetAll() ([]entity.User, error) {
 }
 
 func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.JWTToken, error) {
-	//var token entity.JWTToken
+	var token entity.JWTToken
 
-	//user, err := s.userRepo.GetByPassphrase(credentials.Passcode)
-	//if user.Nickname != credentials.Nickname {
-	//	return token, UserNotFound
-	//}
-	//if err != nil {
-	//	return token, UserNotFound
-	//}
+	user, err := s.userRepo.GetByEmail(credentials.Email)
+	hashedPasscode := auth.GeneratePasswordHash(string(credentials.Passcode), s.passcodeSalt)
+	if hashedPasscode != string(user.Passcode) {
+		return token, UserNotFound
+	}
+	if err != nil {
+		return token, UserNotFound
+	}
 
-	//return s.newAccessToken(user)
-	return "", nil
+	return s.newAccessToken(user)
 }
 
 type tokenClaims struct {
