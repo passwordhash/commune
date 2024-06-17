@@ -1,2 +1,5 @@
 auth:
   accessTokenTTL: 3d
+
+http:
+    port: 8090

@@ -17,6 +17,9 @@ import (
 
 //var ctx = context.TODO()
 
+// ConfigFilename TEMP
+var ConfigFilename = "config"
+
 func main() {
 	flag.Parse()
 
@@ -24,9 +27,10 @@ func main() {
 		logrus.Fatalf("cannot load env file: %v", err.Error())
 	}
 
-	if err := app.InitConfig("config"); err != nil {
+	if err := app.InitConfig(ConfigFilename); err != nil {
 		logrus.Fatal(err)
 	}
+	config := LoadConfig()
 
 	hub := websocket.NewHub()
 	go hub.Run()
@@ -45,9 +49,19 @@ func main() {
 	handlers := handler.NewHandler(hub, services)
 
 	srv := new(server.Server)
-	if err := srv.Run("8090", handlers.InitRoutes()); err != nil {
+	logrus.Info("Trying to start Commune Server...")
+	if err := srv.Run(config.Port, handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("error occured while running http server: %s", err.Error())
 	}
 
-	logrus.Info("Commune Server Started")
+	logrus.Info("Commune Server shut down")
+}
+
+type Config struct {
+	Port string
+}
+
+func LoadConfig() Config {
+	port := viper.GetString("http.port")
+	return Config{Port: port}
 }
