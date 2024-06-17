@@ -98,7 +98,7 @@ func (s *EmailService) getEmailTemplate(passcode entity.Passcode) string {
         <i class="fas fa-comments icon"></i>
         <h1>Commune - общайтесь без границ</h1>
         <p>Ваш код для входа в аккаунт:</p>
-        <div class="code">` + passcode[0:len(passcode)/2] + ` ` + passcode[len(passcode)/2:] + `</div>
+        <div class="code">` + passcode + `</div>
         <p>Введите этот код на сайте, чтобы продолжить.</p>
     </div>
     <div class="footer">

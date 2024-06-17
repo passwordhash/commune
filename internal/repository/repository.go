@@ -14,6 +14,7 @@ type User interface {
 	Create(u entity.User) (entity.ObjectID, error)
 	GetById(id entity.ObjectID) (entity.User, error)
 	GetByEmail(email string) (entity.User, error)
+	UpdatePasscode(email string, newPasscodeHash string) error
 	GetAll() ([]entity.User, error)
 }
 

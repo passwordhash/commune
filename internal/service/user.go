@@ -85,6 +85,21 @@ func (s *UserService) GeneratePasscode() (entity.Passcode, error) {
 	return entity.Passcode(fmt.Sprintf("%x", b)), nil
 }
 
+func (s *UserService) UpdatePasscode(u entity.UserCreate) (entity.Passcode, error) {
+	condidate, _ := s.userRepo.GetByEmail(u.Email)
+	if condidate.IsEmpty() || condidate.Nickname != u.Nickname {
+		return "", UserNotFound
+	}
+
+	newPasscode, err := s.GeneratePasscode()
+	if err != nil {
+		return "", err
+	}
+	newHashedPasscode := auth.GeneratePasswordHash(string(newPasscode), s.passcodeSalt)
+
+	return newPasscode, s.userRepo.UpdatePasscode(u.Email, newHashedPasscode)
+}
+
 func (s *UserService) GetById(id entity.ObjectID) (entity.User, error) {
 	return s.userRepo.GetById(id)
 }

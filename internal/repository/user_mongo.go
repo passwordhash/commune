@@ -50,6 +50,16 @@ func (r *UserRepository) GetByEmail(email string) (entity.User, error) {
 	return user, err
 }
 
+func (r *UserRepository) UpdatePasscode(email string, newPasscodeHash string) error {
+	filter := bson.D{{"email", email}}
+	update := bson.D{{"$set", bson.D{{"passcode", newPasscodeHash}}}}
+
+	// TODO: может стоить проверять прозошли ли изменения ?
+	_, err := r.userC.UpdateOne(context.TODO(), filter, update)
+
+	return err
+}
+
 // TODO протестировать декодирование без курсора
 func (r *UserRepository) GetAll() ([]entity.User, error) {
 	var list []entity.User

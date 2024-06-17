@@ -66,3 +66,29 @@ func (h *Handler) LogIn(c *gin.Context) {
 		Token: token,
 	})
 }
+
+func (h *Handler) ResetPasscode(c *gin.Context) {
+	var input entity.UserCreate
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	newPasscode, err := h.services.User.UpdatePasscode(input)
+	if errors.Is(err, service.UserNotFound) {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// TODO: делать это в горутине (нам не особо важно, чтобы письмо
+	//       точно отправилось. Пользователь в любой момоент может
+	//       запросить отправку письма в любой другой момент)
+	h.services.Email.SendCode(input.Email, newPasscode)
+
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+}

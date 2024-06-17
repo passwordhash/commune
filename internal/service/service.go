@@ -9,6 +9,7 @@ import (
 type User interface {
 	SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passcode, error)
 	GeneratePasscode() (entity.Passcode, error)
+	UpdatePasscode(u entity.UserCreate) (entity.Passcode, error)
 	GetById(id entity.ObjectID) (entity.User, error)
 	GetAll() ([]entity.User, error)
 
