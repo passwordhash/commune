@@ -3,9 +3,12 @@ package service
 import (
 	"commune/internal/entity"
 	"commune/internal/repository"
+	"commune/pkg/auth"
 	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"math/rand"
 	"time"
 )
 
@@ -22,7 +25,7 @@ var (
 type UserService struct {
 	userRepo repository.User
 
-	passphraseSalt string
+	passcodeSalt   string
 	accessTokenTTL time.Duration
 	sigingKey      string
 }
@@ -30,36 +33,71 @@ type UserService struct {
 func NewUserService(userRepo repository.User, deps Deps) *UserService {
 	return &UserService{
 		userRepo:       userRepo,
-		passphraseSalt: deps.PassphraseSalt,
+		passcodeSalt:   deps.PasscodeSalt,
 		accessTokenTTL: deps.AccessTokenTTL,
 		sigingKey:      deps.SigingKey,
 	}
 }
 
-func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, error) {
-	condidate, _ := s.userRepo.GetByPassphrase(u.Passphrase)
+func (s *UserService) SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passcode, error) {
+	condidate, _ := s.userRepo.GetByEmail(u.Email)
 	if !condidate.IsEmpty() {
-		return "", UserAlreadyExists
+		return "", "", UserAlreadyExists
 	}
+
+	passcode, err := s.GeneratePasscode()
+	if err != nil {
+		return "", "", err
+	}
+	hashedPasscode := auth.GeneratePasswordHash(string(passcode), s.passcodeSalt)
 
 	user := entity.User{
-		ID:         entity.NewObjectId(),
-		Name:       u.Name,
-		Passphrase: u.Passphrase,
-		CreatedAt:  primitive.NewDateTimeFromTime(time.Now()),
+		ID:        entity.NewObjectId(),
+		Nickname:  u.Nickname,
+		Email:     u.Email,
+		Passcode:  entity.Passcode(hashedPasscode),
+		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
 	}
 
-	_, err := s.userRepo.Create(user)
+	_, err = s.userRepo.Create(user)
 	if err != nil {
-		return "", UserCreationError
+		return "", "", UserCreationError
 	}
 
 	token, err := s.GenerateToken(user)
 	if err != nil {
-		return "", AccessTokenCreationError
+		return "", "", AccessTokenCreationError
 	}
 
-	return token, nil
+	return token, passcode, nil
+}
+
+func (s *UserService) GeneratePasscode() (entity.Passcode, error) {
+	b := make([]byte, 3)
+
+	src := rand.NewSource(time.Now().Unix())
+	r := rand.New(src)
+
+	_, err := r.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return entity.Passcode(fmt.Sprintf("%x", b)), nil
+}
+
+func (s *UserService) UpdatePasscode(u entity.UserCreate) (entity.Passcode, error) {
+	condidate, _ := s.userRepo.GetByEmail(u.Email)
+	if condidate.IsEmpty() || condidate.Nickname != u.Nickname {
+		return "", UserNotFound
+	}
+
+	newPasscode, err := s.GeneratePasscode()
+	if err != nil {
+		return "", err
+	}
+	newHashedPasscode := auth.GeneratePasswordHash(string(newPasscode), s.passcodeSalt)
+
+	return newPasscode, s.userRepo.UpdatePasscode(u.Email, newHashedPasscode)
 }
 
 func (s *UserService) GetById(id entity.ObjectID) (entity.User, error) {
@@ -73,8 +111,9 @@ func (s *UserService) GetAll() ([]entity.User, error) {
 func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.JWTToken, error) {
 	var token entity.JWTToken
 
-	user, err := s.userRepo.GetByPassphrase(credentials.Passphrase)
-	if user.Name != credentials.Name {
+	user, err := s.userRepo.GetByEmail(credentials.Email)
+	hashedPasscode := auth.GeneratePasswordHash(string(credentials.Passcode), s.passcodeSalt)
+	if hashedPasscode != string(user.Passcode) {
 		return token, UserNotFound
 	}
 	if err != nil {

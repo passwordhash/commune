@@ -7,8 +7,9 @@ import (
 )
 
 type User interface {
-	// TODO: return jwt
-	SignUp(u entity.UserCreate) (entity.JWTToken, error)
+	SignUp(u entity.UserCreate) (entity.JWTToken, entity.Passcode, error)
+	GeneratePasscode() (entity.Passcode, error)
+	UpdatePasscode(u entity.UserCreate) (entity.Passcode, error)
 	GetById(id entity.ObjectID) (entity.User, error)
 	GetAll() ([]entity.User, error)
 
@@ -23,19 +24,36 @@ type Message interface {
 	Create(m entity.Message) (entity.ObjectID, error)
 }
 
+type Email interface {
+	SendCode(to string, passcode entity.Passcode) error
+}
+
 type Service struct {
 	User
 	Message
+	Email
 }
 
 type Deps struct {
-	PassphraseSalt string
+	PasscodeSalt   string
 	AccessTokenTTL time.Duration
 	SigingKey      string
+
+	EmailDeps
+}
+
+type EmailDeps struct {
+	SmtpHost string
+	SmtpPort int
+
+	From     string
+	Password string
 }
 
 func NewService(repos *repository.Repository, deps Deps) *Service {
 	return &Service{
 		User:    NewUserService(repos.User, deps),
-		Message: NewMessageService(repos.Message)}
+		Message: NewMessageService(repos.Message),
+		Email:   NewEmailService(deps.EmailDeps),
+	}
 }

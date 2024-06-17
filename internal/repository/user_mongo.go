@@ -37,10 +37,10 @@ func (r *UserRepository) GetById(id entity.ObjectID) (entity.User, error) {
 	return user, err
 }
 
-func (r *UserRepository) GetByPassphrase(p string) (entity.User, error) {
+func (r *UserRepository) GetByEmail(email string) (entity.User, error) {
 	var user entity.User
 
-	cur := r.userC.FindOne(context.TODO(), bson.M{"passphrase": p})
+	cur := r.userC.FindOne(context.TODO(), bson.M{"email": email})
 	if cur.Err() != nil {
 		return user, cur.Err()
 	}
@@ -48,6 +48,16 @@ func (r *UserRepository) GetByPassphrase(p string) (entity.User, error) {
 	err := cur.Decode(&user)
 
 	return user, err
+}
+
+func (r *UserRepository) UpdatePasscode(email string, newPasscodeHash string) error {
+	filter := bson.D{{"email", email}}
+	update := bson.D{{"$set", bson.D{{"passcode", newPasscodeHash}}}}
+
+	// TODO: может стоить проверять прозошли ли изменения ?
+	_, err := r.userC.UpdateOne(context.TODO(), filter, update)
+
+	return err
 }
 
 // TODO протестировать декодирование без курсора

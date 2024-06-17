@@ -3,3 +3,8 @@ auth:
 
 http:
     port: 8090
+
+email:
+    smtpHost: "smtp.mail.ru"
+    smtpPort: 465
+    from: "commune.social@mail.ru"

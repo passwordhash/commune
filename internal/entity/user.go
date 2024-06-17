@@ -6,32 +6,34 @@ import (
 )
 
 type User struct {
-	ID   ObjectID `bson:"_id"`
-	Name string   `bson:"name"`
+	ID       ObjectID `bson:"_id"`
+	Nickname string   `bson:"nickname"`
+	Email    string   `bson:"email"`
 	// TODO validation
-	Passphrase string             `bson:"passphrase"`
-	CreatedAt  primitive.DateTime `bson:"createdAt"`
+	Passcode  Passcode           `bson:"passcode"`
+	CreatedAt primitive.DateTime `bson:"createdAt"`
 }
 
 func (u *User) IsEmpty() bool {
-	return u.ID == "" || u.Passphrase == ""
+	return u.ID == "" || u.Passcode == ""
 }
 
 type UserCreate struct {
-	Name       string `json:"name" binding:"required"`
-	Passphrase string `json:"passphrase" binding:"required"`
+	Nickname string `json:"nickname" binding:"required"`
+	Email    string `json:"email" binding:"required"`
 }
 
 type UserAuth struct {
-	Name       string `json:"name" binding:"required"`
-	Passphrase string `json:"passphrase" binding:"required"`
+	Email    string   `json:"email" binding:"required"`
+	Passcode Passcode `json:"passcode" binding:"required"`
 }
 
 type UserResponse struct {
-	ID         ObjectID  `json:"id"`
-	Name       string    `json:"name"`
-	Passphrase string    `json:"passphrase"`
-	CreatedAt  time.Time `json:"createdAt"`
+	ID        ObjectID  `json:"id"`
+	Nickname  string    `json:"nickname"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type JWTToken string
+type Passcode string

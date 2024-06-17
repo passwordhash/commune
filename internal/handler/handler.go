@@ -34,13 +34,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		auth.POST("/sign-up", h.SignUp)
 		auth.POST("/sign-in", h.LogIn)
+		auth.POST("/reset", h.ResetPasscode)
 	}
 
 	api := app.Group("/api")
 	{
 		api.POST("/new", h.Create)
+		api.GET("/message/:ID", h.GetById)
 		api.GET("/list", h.Get)
-		api.GET("/message/:ID", h.Get)
 
 	}
 
