@@ -1,8 +1,11 @@
 <script setup>
 import {useWebSocket} from "@vueuse/core";
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, onRenderTracked, ref, warn, watch} from "vue";
-import axios from "axios";
 import Message from "@/components/Message.vue";
+import {useMessageStore} from "@/stores/message.js";
+
+const store = useMessageStore()
+// const { messages, fetchMessages } = storeToRefs(store)
 
 const {status, data, send, open, close} = useWebSocket('ws://localhost:8090/ws/chat', {
   autoReconnect: {
@@ -16,38 +19,31 @@ const {status, data, send, open, close} = useWebSocket('ws://localhost:8090/ws/c
 
 const inputMsg = ref('')
 
-const messages = ref([])
-
 const bottom = ref()
 
 const submit = (e) => {
   e.preventDefault()
 
-  if (e.key !== "Enter" || !canSend.value) {
+  if (!canSend.value) {
     return
   }
 
-  axios.post('http://localhost:8090/api/new', {
-    text: inputMsg.value,
+  store.newMessage({
+    text: inputMsg.value
   })
-      .then(send(inputMsg.value))
-
-  inputMsg.value = ""
+      .then(() => {
+        send(inputMsg.value)
+      })
+      .then(() => {
+        inputMsg.value = ""
+      })
 }
 
 watch(data, (newVal) => {
-  messages.value.push(JSON.parse(newVal))
+  store.addMessage(JSON.parse(newVal))
 })
-
 onBeforeMount(() => {
-  axios.get('http://localhost:8090/api/list')
-      .then(response => {
-        messages.value = response.data
-      })
-      .catch(error => {
-        console.log(error)
-      })
-
+  store.fetchMessages()
 })
 
 const isFirstMount = ref(true)
@@ -62,7 +58,7 @@ const scrollToBottom = () => {
 }
 
 const isLast = (msg) => {
-  return msg.id === messages.value[messages.value.length - 1].id
+  return msg.id === store.messages[store.messages.length - 1].id
 }
 
 const canSend = (computed(() => {
@@ -75,7 +71,7 @@ const canSend = (computed(() => {
   <div class="container my-4">
     <div class="chat-container">
 
-      <Message v-for="msg in messages"
+      <Message v-for="msg in store.messages"
                :key="msg.id"
                :msg="msg"
                :is-last="isLast(msg)"

@@ -2,15 +2,22 @@
 import {computed, ref} from "vue";
 import InputForm from "@/components/InputForm.vue";
 import router from "@/router/index.js";
+import {useUserStore} from "@/stores/user.js";
+
+const store = useUserStore()
 
 const name = ref('')
-const phone = ref('')
-const code = ref('')
+const passphrase = ref('')
 const submit = ref(false)
 
 const onsubmit = (e) => {
   e.preventDefault()
-  router.push('/chat')
+
+  store.authorize({
+    name: name.value,
+    passphrase: passphrase.value
+  })
+  // router.push('/chat')
 }
 
 const clickable = computed(() => {
@@ -29,17 +36,12 @@ const clickable = computed(() => {
       <div class="col-sm-10 col-md-8 col-lg-6">
         <form id="authForm">
           <div class="form-group">
-            <InputForm
-                :placeholder="'Номер телефона'"
-                v-model="phone"/>
-          </div>
-          <div class="form-group">
-            <InputForm v-model="code"
-                       :placeholder="'Код подтверждения'"/>
-          </div>
-          <div class="form-group">
             <InputForm v-model="name"
                        :placeholder="'Выше имя'"/>
+          </div>
+          <div class="form-group">
+            <InputForm v-model="passphrase"
+                       :placeholder="'Уникальная парольная фраза'"/>
           </div>
           <button
               v-if="clickable"
