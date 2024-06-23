@@ -1,9 +1,15 @@
 <script setup>
+import {useUserStore} from "@/stores/user.js";
+
+const store = useUserStore()
 
 </script>
 
 <template>
-    <footer class="footer mt-auto py-3">
+    <footer :style="{
+        // '--primary-color': store.primaryColor,
+        // '--background-color': store.primaryColor
+    }"  class="footer mt-auto py-3">
     <div class="container ">
       <span class="text-muted">Сделано автором</span>
       <a class="container" href="https://github.com/passwordhash" target="_blank">
@@ -16,10 +22,9 @@
 <style scoped>
 a {
   text-decoration: none;
-  //color: inherit;
 }
 .footer {
-  background-color: #C8E6C9;
+  background-color: var(--background-color);
   position: absolute;
   left: 0;
   bottom: 0;

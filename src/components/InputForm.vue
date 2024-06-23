@@ -16,5 +16,15 @@ const props = defineProps({
 </template>
 
 <style scoped>
+.form-control {
+  border-radius: 20px;
+  border-color: #4CAF50;
+  margin: 0 auto 10px;
+  height: 50px;
+}
 
+.form-control:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+}
 </style>

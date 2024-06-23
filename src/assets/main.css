@@ -1,2 +1,13 @@
-/*@import './base.css';*/
+@import './base.css';
 
+body {
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.unselectable {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

@@ -1,8 +1,8 @@
-import {ref, computed} from 'vue'
+import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import axios from "axios";
 
-export const useMessageStore = defineStore('user', () => {
+export const useMessageStore = defineStore('message', () => {
     const baseUrl = import.meta.env.VITE_API_BASE_DOMAIN
 
     const messages = ref([])
@@ -12,7 +12,6 @@ export const useMessageStore = defineStore('user', () => {
             .then(response => {
                 messages.value = response.data
             })
-
             .catch(error => {
                 console.log(error)
             })
@@ -29,5 +28,10 @@ export const useMessageStore = defineStore('user', () => {
         messages.value.push(message)
     }
 
-    return {messages, fetchMessages, addMessage, newMessage}
+    return {
+        messages,
+        fetchMessages,
+        addMessage,
+        newMessage
+    }
 })
