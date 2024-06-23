@@ -13,7 +13,7 @@ const passcode = ref('')
 
 const onsubmitLogin = (e) => {
     e.preventDefault()
-    store.authorize(email.value, passcode.value)
+    store.authorize(email.value.trim(), passcode.value.trim())
         .then(res => {
             store.user.token = res.data.token
             if (res.status === 200) {
@@ -27,7 +27,7 @@ const onsubmitLogin = (e) => {
 
 const onsubmitRegister = (e) => {
     e.preventDefault()
-    store.register(email.value, nickname.value)
+    store.register(email.value.trim(), nickname.value.trim())
         .then(res => {
             if (res.status === 200) {
                 // TODO: do modal instead of alert
@@ -45,10 +45,10 @@ const onlink = () => {
 }
 
 const loginClickable = computed(() => {
-    return email.value.length > 0 && passcode.value.length > 0
+    return email.value.trim().length > 0 && passcode.value.trim().length > 0
 })
 const signUpClickable = computed(() => {
-    return email.value.length > 0
+    return email.value.trim().length > 0 && nickname.value.trim().length > 0
 })
 
 </script>
@@ -174,6 +174,4 @@ const signUpClickable = computed(() => {
     visibility: hidden;
     translate: -100% 0;
 }
-
-
 </style>

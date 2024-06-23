@@ -6,7 +6,6 @@ export const useUserStore = defineStore('user', () => {
     const baseUrl = import.meta.env.VITE_API_BASE_DOMAIN
 
     const user = ref({})
-    // const primaryColor = ref("")
 
     // increment
     // const doubleCount = computed(() => count.value * 2)
