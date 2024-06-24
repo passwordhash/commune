@@ -185,6 +185,48 @@
                 }
             }
         },
+        "/auth/check": {
+            "get": {
+                "tags": ["auth"],
+                "summary": "Check if auth token valid",
+                "description": "Check if auth token valid",
+                "operationId": "check",
+                "responses": {
+                    "200": {
+                        "description": "Auth token valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User unathorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "token has invalid claims: token is expired"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        },
 
         "/pet/findByStatus": {
             "get": {
@@ -1106,23 +1148,16 @@
             }
         },
         "securitySchemes": {
-            "petstore_auth": {
-                "type": "oauth2",
-                "flows": {
-                    "implicit": {
-                        "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
-                        "scopes": {
-                            "write:pets": "modify pets in your account",
-                            "read:pets": "read your pets"
-                        }
-                    }
-                }
-            },
-            "api_key": {
-                "type": "apiKey",
-                "name": "api_key",
-                "in": "header"
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
-    }
+    },
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
 }

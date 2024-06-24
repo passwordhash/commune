@@ -92,3 +92,7 @@ func (h *Handler) ResetPasscode(c *gin.Context) {
 
 	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
+
+func (h *Handler) Check(c *gin.Context) {
+	c.JSON(http.StatusOK, statusResponse{"ok"})
+}
