@@ -37,7 +37,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/reset", h.ResetPasscode)
 	}
 
-	api := app.Group("/api")
+	api := app.Group("/api", h.userIdentity)
 	{
 		api.POST("/new", h.Create)
 		api.GET("/message/:ID", h.GetById)

@@ -13,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
+	"time"
 )
 
 //var ctx = context.TODO()
@@ -42,7 +43,7 @@ func main() {
 
 	repos := repository.NewRepository(mongoDB)
 	services := service.NewService(repos, service.Deps{
-		AccessTokenTTL: viper.GetDuration("auth.accessTokenTTL"),
+		AccessTokenTTL: config.AccessTokenTTL,
 		SigingKey:      os.Getenv("SIGING_KEY"),
 		PasscodeSalt:   os.Getenv("PASSWORD_SALT"),
 		EmailDeps: service.EmailDeps{
@@ -64,6 +65,8 @@ func main() {
 }
 
 type Config struct {
+	AccessTokenTTL time.Duration
+
 	Port string
 
 	// For email
@@ -73,15 +76,17 @@ type Config struct {
 }
 
 func LoadConfig() Config {
+	accessTokenTTl := viper.GetDuration("auth.accessTokenTTL")
 	port := viper.GetString("http.port")
 
 	stmpHost := viper.GetString("email.smtpHost")
 	smtpPort := viper.GetInt("email.smtpPort")
 	from := viper.GetString("email.from")
 	return Config{
-		Port:     port,
-		smtpPort: smtpPort,
-		smtpHost: stmpHost,
-		from:     from,
+		AccessTokenTTL: accessTokenTTl,
+		Port:           port,
+		smtpPort:       smtpPort,
+		smtpHost:       stmpHost,
+		from:           from,
 	}
 }

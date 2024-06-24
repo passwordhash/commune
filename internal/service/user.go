@@ -157,7 +157,6 @@ func (s *UserService) newAccessToken(user entity.User) (entity.JWTToken, error) 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		tokenClaims{
 			user.ID,
-			//user,
 			jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.accessTokenTTL)),
 			},
