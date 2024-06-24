@@ -2,18 +2,26 @@
 import { RouterLink, RouterView } from 'vue-router'
 import Footer from "@/components/Footer.vue";
 import {useUserStore} from "@/stores/user.js";
+import {onBeforeMount} from "vue";
 
-let userStore = useUserStore()
+const storeUser = useUserStore()
 
-console.log(userStore.user)
+onBeforeMount(() => {
+    if (storeUser.token != null) {
+        storeUser.isAuthenticated = true
+    }
+})
+
+
+
 </script>
 
 <template>
-  <RouterView>
+    <RouterView>
 
-  </RouterView>
+    </RouterView>
 
-  <Footer />
+    <Footer />
 </template>
 
 <style scoped>

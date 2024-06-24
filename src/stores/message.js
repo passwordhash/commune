@@ -7,18 +7,23 @@ export const useMessageStore = defineStore('message', () => {
 
     const messages = ref([])
 
-    function fetchMessages() {
-        axios.get(`${baseUrl}/api/list`)
-            .then(response => {
-                messages.value = response.data
-            })
-            .catch(error => {
-                console.log(error)
+    function fetchMessages(token) {
+        return axios.get(`${baseUrl}/api/list`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                messages.value = res.data
             })
     }
 
-    function newMessage(message) {
-        return axios.post(`${baseUrl}/api/new`, message)
+    function newMessage(message, token) {
+        return axios.post(`${baseUrl}/api/new`, message, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .catch(error => {
                 console.log(error)
             })

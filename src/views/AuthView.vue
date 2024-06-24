@@ -1,10 +1,10 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import InputForm from "@/components/InputForm.vue";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/user.js";
 
-const store = useUserStore()
+const storeUser = useUserStore()
 
 const isAuth = ref(true);
 const email = ref('')
@@ -13,12 +13,13 @@ const passcode = ref('')
 
 const onsubmitLogin = (e) => {
     e.preventDefault()
-    store.authorize(email.value.trim(), passcode.value.trim())
+    storeUser.authorize(email.value.trim(), passcode.value.trim())
         .then(res => {
-            store.user.token = res.data.token
-            if (res.status === 200) {
-                router.push('/chat')
+            if (res.status !== 200) {
+                return
             }
+            storeUser.setToken(res.data.token)
+            router.push("/chat")
         }).catch(err => alert(err));
 
     email.value = ""
@@ -27,7 +28,7 @@ const onsubmitLogin = (e) => {
 
 const onsubmitRegister = (e) => {
     e.preventDefault()
-    store.register(email.value.trim(), nickname.value.trim())
+    storeUser.register(email.value.trim(), nickname.value.trim())
         .then(res => {
             if (res.status === 200) {
                 // TODO: do modal instead of alert
@@ -49,6 +50,12 @@ const loginClickable = computed(() => {
 })
 const signUpClickable = computed(() => {
     return email.value.trim().length > 0 && nickname.value.trim().length > 0
+})
+
+onBeforeMount(() => {
+    if (storeUser.isAuthenticated) {
+        router.push("/chat")
+    }
 })
 
 </script>

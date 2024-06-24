@@ -1,5 +1,5 @@
 <script setup>
-import {useWebSocket} from "@vueuse/core";
+import {onKeyStroke, useWebSocket} from "@vueuse/core";
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, onRenderTracked, ref, warn, watch} from "vue";
 import Message from "@/components/Message.vue";
 import {useMessageStore} from "@/stores/message.js";
@@ -20,8 +20,8 @@ const {status, data, send, open, close} = useWebSocket('ws://localhost:8090/ws/c
 })
 
 const inputMsg = ref('')
-
 const bottom = ref()
+const isFirstMount = ref(true)
 
 const submit = (e) => {
     e.preventDefault()
@@ -30,11 +30,11 @@ const submit = (e) => {
         return
     }
 
-    storeMsg.fetchMessages()
+    storeMsg.fetchMessages(storeUser.token)
 
     storeMsg.newMessage({
         text: inputMsg.value
-    })
+    }, storeUser.token)
         .then(() => {
             send(inputMsg.value)
         })
@@ -43,7 +43,6 @@ const submit = (e) => {
         })
 }
 
-const isFirstMount = ref(true)
 const scrollToBottom = () => {
     let params = {}
     if (!isFirstMount.value) {
@@ -66,10 +65,21 @@ watch(data, (newVal) => {
     storeMsg.addMessage(JSON.parse(newVal))
 })
 onBeforeMount(() => {
-    if (storeUser.user.token === undefined) {
+    let token = storeUser.token
+    console.log("token: ", token)
+    if (token === null || token === 0) {
         return router.push('/')
     }
-    storeMsg.fetchMessages()
+    // TODO: проверка самого токена
+
+    storeMsg.fetchMessages(token)
+        .catch( err => {
+            if (err.response.status === 401) {
+                console.log("user unauthorized")
+                storeUser.logout()
+                router.push("/")
+            }
+        })
 })
 </script>
 
