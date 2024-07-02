@@ -43,8 +43,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		message := api.Group("/message")
 		{
 			message.POST("/new", h.Create)
-			message.GET("/message/:ID", h.GetById)
 			message.GET("/list", h.Get)
+			message.GET("/:ID", h.GetById)
 		}
 
 	}

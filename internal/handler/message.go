@@ -9,6 +9,7 @@ import (
 
 func (h *Handler) Create(c *gin.Context) {
 	var input entity.MessageCreate
+	// TODO: проверка/сравнение input.authorID с UserId из контекса
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
