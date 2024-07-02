@@ -108,19 +108,25 @@ func (s *UserService) GetAll() ([]entity.User, error) {
 	return s.userRepo.GetAll()
 }
 
-func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.JWTToken, error) {
+func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.AuthData, error) {
 	var token entity.JWTToken
 
+	// Получение кандидата
 	user, err := s.userRepo.GetByEmail(credentials.Email)
 	hashedPasscode := auth.GeneratePasswordHash(string(credentials.Passcode), s.passcodeSalt)
 	if hashedPasscode != string(user.Passcode) {
-		return token, UserNotFound
+		return entity.AuthData{}, UserNotFound
 	}
 	if err != nil {
-		return token, UserNotFound
+		return entity.AuthData{}, UserNotFound
 	}
 
-	return s.newAccessToken(user)
+	token, err = s.newAccessToken(user)
+	if err != nil {
+		return entity.AuthData{}, err
+	}
+
+	return entity.AuthData{ID: user.ID, Token: token}, nil
 }
 
 type tokenClaims struct {

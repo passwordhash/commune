@@ -40,9 +40,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := app.Group("/api", h.userIdentity)
 	{
-		api.POST("/new", h.Create)
-		api.GET("/message/:ID", h.GetById)
-		api.GET("/list", h.Get)
+		message := api.Group("/message")
+		{
+			message.POST("/new", h.Create)
+			message.GET("/list", h.Get)
+			message.GET("/:ID", h.GetById)
+		}
 
 	}
 

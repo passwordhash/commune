@@ -35,5 +35,10 @@ type UserResponse struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+type AuthData struct {
+	Token JWTToken
+	ID    ObjectID
+}
+
 type JWTToken string
 type Passcode string

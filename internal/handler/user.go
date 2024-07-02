@@ -9,7 +9,8 @@ import (
 )
 
 type signUpResponse struct {
-	Token entity.JWTToken `json:"token"`
+	Token    entity.JWTToken `json:"token"`
+	AuthorID entity.ObjectID `json:"author_id"`
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
@@ -52,7 +53,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.User.Authenticate(input)
+	authData, err := h.services.User.Authenticate(input)
 	if errors.Is(err, service.UserNotFound) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -63,7 +64,8 @@ func (h *Handler) LogIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, signUpResponse{
-		Token: token,
+		Token:    authData.Token,
+		AuthorID: authData.ID,
 	})
 }
 
