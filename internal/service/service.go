@@ -13,7 +13,7 @@ type User interface {
 	GetById(id entity.ObjectID) (entity.User, error)
 	GetAll() ([]entity.User, error)
 
-	Authenticate(credentials entity.UserAuth) (entity.JWTToken, error)
+	Authenticate(credentials entity.UserAuth) (entity.AuthData, error)
 	GenerateToken(u entity.User) (entity.JWTToken, error)
 	ParseToken(token entity.JWTToken) (entity.ObjectID, error)
 }
