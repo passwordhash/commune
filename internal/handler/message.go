@@ -8,21 +8,19 @@ import (
 )
 
 func (h *Handler) Create(c *gin.Context) {
-	var input entity.Message
+	var input entity.MessageCreate
 
 	if err := c.BindJSON(&input); err != nil {
-		//requestInput(body).invalidInput(c, err)
-		logrus.Info(err)
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if _, err := h.services.Create(input); err != nil {
-		//newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		logrus.Info(err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, "ok")
+	c.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
 func (h *Handler) GetById(c *gin.Context) {

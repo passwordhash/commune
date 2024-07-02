@@ -5,6 +5,7 @@ import (
 	"commune/internal/entity"
 	"commune/internal/service"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -77,8 +78,9 @@ func (s *Subscription) readPump(service service.Service) {
 		}
 
 		readed = bytes.TrimSpace(bytes.Replace(readed, newline, space, -1))
+		fmt.Println(string(readed))
 
-		ms := entity.NewMessage(string(readed))
+		ms := entity.NewMessage(string(readed), "")
 
 		//if _, err = service.Create(m); err != nil {
 		//	logrus.Errorln(err)

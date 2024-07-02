@@ -12,17 +12,23 @@ func NewObjectId() ObjectID {
 	return ObjectID(uuid.NewString())
 }
 
-// TODO: разбить на разные DTO
-type Message struct {
-	ID   ObjectID           `bson:"_id" json:"id"`
-	Text string             `bson:"text" json:"text"`
-	Date primitive.DateTime `bson:"date" json:"date"`
+type MessageCreate struct {
+	Text     string   `json:"text" binding:"required"`
+	AuthorID ObjectID `bson:"author_id" json:"authorID" binding:"required"`
 }
 
-func NewMessage(text string) Message {
+type Message struct {
+	ID       ObjectID           `bson:"_id" json:"id"`
+	Text     string             `bson:"text" json:"text"`
+	Date     primitive.DateTime `bson:"date" json:"date"`
+	AuthorID ObjectID           `bson:"author_id" json:"authorID"`
+}
+
+func NewMessage(text string, authorID ObjectID) Message {
 	return Message{
-		ID:   NewObjectId(),
-		Text: text,
-		Date: primitive.NewDateTimeFromTime(time.Now()),
+		ID:       NewObjectId(),
+		Text:     text,
+		Date:     primitive.NewDateTimeFromTime(time.Now()),
+		AuthorID: authorID,
 	}
 }

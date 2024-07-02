@@ -21,10 +21,7 @@ func (s *MessageService) Get(ID entity.ObjectID) (entity.Message, error) {
 	return s.msgRepo.Get(ID)
 }
 
-func (s *MessageService) Create(m entity.Message) (entity.ObjectID, error) {
-	//message := entity.NewMessage(text)
-	if m.ID == "" {
-		m.ID = entity.NewObjectId()
-	}
-	return s.msgRepo.Create(m)
+func (s *MessageService) Create(m entity.MessageCreate) (entity.ObjectID, error) {
+	msg := entity.NewMessage(m.Text, m.AuthorID)
+	return s.msgRepo.Create(msg)
 }
