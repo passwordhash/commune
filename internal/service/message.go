@@ -17,6 +17,10 @@ func (s *MessageService) GetList() []entity.Message {
 	return s.msgRepo.GetList()
 }
 
+func (s *MessageService) GetListWithAdditions() ([]entity.Message, error) {
+	return s.msgRepo.GetListWithAuthors()
+}
+
 func (s *MessageService) Get(ID entity.ObjectID) (entity.Message, error) {
 	return s.msgRepo.Get(ID)
 }

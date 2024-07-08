@@ -272,7 +272,7 @@
                 }
             }
         },
-        "/auth/message/list": {
+        "/api/message/list": {
             "get": {
                 "tags": [
                     "messages"
@@ -282,6 +282,14 @@
                 "security": [
                     {
                         "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "withAdditions",
+                        "in": "path",
+                        "required": false,
+                        "description": "If equals true messages will contain additional information, such as the author otherwise just messages"
                     }
                 ],
                 "operationId": "listMessage",
