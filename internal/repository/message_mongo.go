@@ -43,6 +43,7 @@ func (r *MessageRepository) GetList() []entity.Message {
 		logrus.Error(err)
 		return nil
 	}
+	defer cur.Close(context.TODO())
 
 	for cur.Next(context.TODO()) {
 		var msg entity.Message
@@ -55,6 +56,41 @@ func (r *MessageRepository) GetList() []entity.Message {
 	}
 
 	return list
+}
+
+func (r *MessageRepository) GetListWithAuthors() ([]entity.Message, error) {
+	var list []entity.Message
+
+	pipeline := mongo.Pipeline{
+		{{"$lookup", bson.D{
+			{"from", "user"},
+			{"localField", "author_id"},
+			{"foreignField", "_id"},
+			{"as", "author"},
+		}}},
+		{{"$unwind", bson.D{
+			{"path", "$author"},
+			{"preserveNullAndEmptyArrays", true},
+		}}},
+	}
+
+	cur, err := messageCollection(r.db).Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return list, err
+	}
+	defer cur.Close(context.TODO())
+
+	for cur.Next(context.TODO()) {
+		var msg entity.Message
+		if err := cur.Decode(&msg); err != nil {
+			logrus.Error(err)
+			return list, err
+		}
+
+		list = append(list, msg)
+	}
+
+	return list, cur.Err()
 }
 
 func (r *MessageRepository) Create(input entity.Message) (entity.ObjectID, error) {

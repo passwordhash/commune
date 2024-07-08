@@ -17,11 +17,11 @@ type MessageCreate struct {
 }
 
 type Message struct {
-	ID         ObjectID           `bson:"_id" json:"id"`
-	Text       string             `bson:"text" json:"text"`
-	Date       primitive.DateTime `bson:"date" json:"date"`
-	AuthorID   ObjectID           `bson:"author_id" json:"author_id"`
-	Additional []interface{}      `json:"additional"`
+	ID       ObjectID           `bson:"_id" json:"id"`
+	Text     string             `bson:"text" json:"text"`
+	Date     primitive.DateTime `bson:"date" json:"date"`
+	AuthorID ObjectID           `bson:"author_id" json:"author_id"`
+	Author   User               `json:"author"`
 }
 
 func NewMessage(text string, authorID ObjectID) Message {

@@ -21,6 +21,7 @@ type User interface {
 type Message interface {
 	Get(ID entity.ObjectID) (entity.Message, error)
 	GetList() []entity.Message
+	GetListWithAdditions() ([]entity.Message, error)
 	Create(m entity.MessageCreate, id entity.ObjectID) (entity.ObjectID, error)
 }
 

@@ -20,6 +20,7 @@ type User interface {
 
 type Message interface {
 	GetList() []entity.Message
+	GetListWithAuthors() ([]entity.Message, error)
 	Get(ID entity.ObjectID) (entity.Message, error)
 	Create(m entity.Message) (entity.ObjectID, error)
 }

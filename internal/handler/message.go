@@ -2,6 +2,7 @@ package handler
 
 import (
 	"commune/internal/entity"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -44,13 +45,23 @@ func (h *Handler) GetById(c *gin.Context) {
 
 func (h *Handler) Get(c *gin.Context) {
 	var list []entity.Message
+	var err error
 
 	additionalQuery := c.Query("additional")
 	isAdditional, _ := strconv.ParseBool(additionalQuery)
 
-	if !isAdditional {
+	if isAdditional {
+		list, err = h.services.GetListWithAdditions()
+	} else {
 		list = h.services.GetList()
 	}
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	fmt.Println(list)
 
 	c.JSON(http.StatusOK, list)
 }
