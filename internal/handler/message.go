@@ -2,7 +2,6 @@ package handler
 
 import (
 	"commune/internal/entity"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -62,8 +61,6 @@ func (h *Handler) Get(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	fmt.Println(list)
 
 	c.JSON(http.StatusOK, list)
 }
