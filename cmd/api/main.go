@@ -21,6 +21,9 @@ import (
 // ConfigFilename TEMP
 var ConfigFilename = "config"
 
+// TODO:
+// 1) список сообщений с информацией об авторе
+
 func main() {
 	flag.Parse()
 

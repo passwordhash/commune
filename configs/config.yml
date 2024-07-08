@@ -1,5 +1,5 @@
 auth:
-  accessTokenTTL: 1m
+  accessTokenTTL: 15m
 #  accessTokenTTL: 72h
 
 http:

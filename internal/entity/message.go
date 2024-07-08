@@ -13,8 +13,7 @@ func NewObjectId() ObjectID {
 }
 
 type MessageCreate struct {
-	Text     string   `json:"text" binding:"required"`
-	AuthorID ObjectID `bson:"author_id" json:"author_id" binding:"required"`
+	Text string `json:"text" binding:"required"`
 }
 
 type Message struct {

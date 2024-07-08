@@ -21,7 +21,7 @@ type User interface {
 type Message interface {
 	Get(ID entity.ObjectID) (entity.Message, error)
 	GetList() []entity.Message
-	Create(m entity.MessageCreate) (entity.ObjectID, error)
+	Create(m entity.MessageCreate, id entity.ObjectID) (entity.ObjectID, error)
 }
 
 type Email interface {

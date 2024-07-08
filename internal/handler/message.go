@@ -9,14 +9,19 @@ import (
 
 func (h *Handler) Create(c *gin.Context) {
 	var input entity.MessageCreate
-	// TODO: проверка/сравнение input.authorID с UserId из контекса
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
-	if _, err := h.services.Create(input); err != nil {
+	ID, exists := c.Get(idCtx)
+	authorID, ok := ID.(entity.ObjectID)
+	if !exists || !ok {
+		newErrorResponse(c, http.StatusUnauthorized, "user is unauthorized")
+		return
+	}
+	if _, err := h.services.Create(input, authorID); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

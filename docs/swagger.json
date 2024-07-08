@@ -231,7 +231,7 @@
             "post": {
                 "tags": ["messages"],
                 "summary": "Create new message and send it to websocket subscribers",
-                "description": "Create new message with text and author id and send it to websocket subscribers",
+                "description": "Create new message with text and author id and send it to websocket subscribers. Takes author id from Bearer Token",
                 "security": [
                     {
                         "BearerAuth": []
@@ -350,10 +350,6 @@
                     "text": {
                         "type": "string",
                         "example": "Hello"
-                    },
-                    "author_id": {
-                        "type": "string",
-                        "example": "2c5ba38d-b0f0-4389-ae75-78ba6fbe6dda"
                     }
                 }
             },
