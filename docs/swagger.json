@@ -346,7 +346,7 @@
                         "type": "string",
                         "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIyYzViYTM4ZC1iMGYwLTQzODktYWU3NS03OGJhNmZiZTZkZGEiLCJleHAiOjE3MTg3MDk2MzB9"
                     },
-                    "author_id": {
+                    "id": {
                         "type": "string",
                         "example": "2c5ba38d-b0f0-4389-ae75-78ba6fbe6dda"
                     }

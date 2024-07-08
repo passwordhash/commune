@@ -9,8 +9,8 @@ import (
 )
 
 type signUpResponse struct {
-	Token    entity.JWTToken `json:"token"`
-	AuthorID entity.ObjectID `json:"author_id"`
+	Token entity.JWTToken `json:"token"`
+	ID    entity.ObjectID `json:"id"`
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
@@ -64,8 +64,8 @@ func (h *Handler) LogIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, signUpResponse{
-		Token:    authData.Token,
-		AuthorID: authData.ID,
+		Token: authData.Token,
+		ID:    authData.ID,
 	})
 }
 
