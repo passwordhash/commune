@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+const withAdditionsQueryP = "withAdditions"
+
 func (h *Handler) Create(c *gin.Context) {
 	var input entity.MessageCreate
 
@@ -47,7 +49,7 @@ func (h *Handler) Get(c *gin.Context) {
 	var list []entity.Message
 	var err error
 
-	additionalQuery := c.Query("additional")
+	additionalQuery := c.Query(withAdditionsQueryP)
 	isAdditional, _ := strconv.ParseBool(additionalQuery)
 
 	if isAdditional {

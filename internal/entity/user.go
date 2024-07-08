@@ -29,7 +29,7 @@ type UserAuth struct {
 }
 
 type UserResponse struct {
-	ID        ObjectID  `json:"id"`
+	ID        ObjectID  `json:"id" bson:"_id"`
 	Nickname  string    `json:"nickname"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"createdAt"`

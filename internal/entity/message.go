@@ -20,8 +20,8 @@ type Message struct {
 	ID       ObjectID           `bson:"_id" json:"id"`
 	Text     string             `bson:"text" json:"text"`
 	Date     primitive.DateTime `bson:"date" json:"date"`
-	AuthorID ObjectID           `bson:"author_id" json:"author_id"`
-	Author   User               `json:"author"`
+	AuthorID ObjectID           `bson:"author_id" json:"author_id,omitempty"`
+	Author   *UserResponse      `json:"author,omitempty"`
 }
 
 func NewMessage(text string, authorID ObjectID) Message {

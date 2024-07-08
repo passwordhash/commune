@@ -86,6 +86,7 @@ func (r *MessageRepository) GetListWithAuthors() ([]entity.Message, error) {
 			logrus.Error(err)
 			return list, err
 		}
+		msg.AuthorID = ""
 
 		list = append(list, msg)
 	}
