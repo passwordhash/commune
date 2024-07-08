@@ -15,6 +15,9 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    isOwned: {
+        type: Boolean,
+    }
 })
 
 onMounted(() => {
@@ -33,15 +36,10 @@ let formatMessageTime = computed (() => {
 
 </script>
 
-<!--<template>-->
-<!--    <div class="message d-block flex-column">-->
-<!--        &lt;!&ndash;        <div><small class="text-muted">User1, 15:00</small></div>&ndash;&gt;-->
-<!--        <div><small class="text-muted">{{ formatMessageTime }}</small></div>-->
-<!--        <div class="message-text">{{ msg.text }}</div>-->
-<!--    </div>-->
-<!--</template>-->
 <template>
-    <div class="message-card">
+    <div class="message-card"
+         :class="{'own-message': props.isOwned}"
+    >
         <div class="message-header">
             <span class="username">{{ msg.author.nickname }}</span>
         </div>
@@ -56,26 +54,8 @@ let formatMessageTime = computed (() => {
 
 <style scoped>
 
-.message {
-    margin-bottom: 10px;
-}
-
 .own-message {
-    text-align: right;
-}
-
-.message-text {
-    display: inline-block;
-    border-radius: 20px;
-    padding: 10px;
-    background-color: #FFFFFF;
-    max-width: 70%;
-    word-wrap: break-word;
-}
-
-.own-message .message-text {
-    background-color: #4CAF50;
-    color: #FFFFFF;
+    align-self: end;
 }
 
 .message-card {
@@ -83,7 +63,7 @@ let formatMessageTime = computed (() => {
     color: white;
     padding: 10px;
     border-radius: 15px;
-    max-width: 300px;
+    width: 38%;
     margin: 10px 0;
     position: relative;
 }

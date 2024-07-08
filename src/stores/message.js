@@ -19,7 +19,7 @@ export const useMessageStore = defineStore('message', () => {
     }
 
     function newMessage(message, token) {
-        return axios.post(`${baseUrl}/api/new`, message, {
+        return axios.post(`${baseUrl}/api/message/new`, message, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }

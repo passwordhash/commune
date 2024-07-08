@@ -18,9 +18,9 @@ const onsubmitLogin = (e) => {
             if (res.status !== 200) {
                 return
             }
-            storeUser.setToken(res.data.token)
+            storeUser.setData(res.data.token, res.data.id)
             router.push("/chat")
-        }).catch(err => alert(err));
+        }).catch(err => alert(err.response.data.message));
 
     email.value = ""
     passcode.value = ""
@@ -37,7 +37,7 @@ const onsubmitRegister = (e) => {
                 nickname.value = ""
             }
         })
-        .catch(err => alert(err));
+        .catch(err => alert(err.response.data.message));
     // nickname.value = ""
 }
 

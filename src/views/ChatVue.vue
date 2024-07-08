@@ -62,7 +62,10 @@ const canSend = (computed(() => {
 }))
 
 watch(data, (newVal) => {
-    storeMsg.addMessage(JSON.parse(newVal))
+    console.log(newVal)
+    storeMsg.addMessage(
+        JSON.parse(newVal)
+    )
 })
 onBeforeMount(() => {
     let token = storeUser.token
@@ -89,6 +92,7 @@ onBeforeMount(() => {
             <Message v-for="msg in storeMsg.messages"
                      :key="msg.id"
                      :msg="msg"
+                     :is-owned="storeUser.accountId === msg.author.id"
                      :is-last="isLast(msg)"
                      @mounted="scrollToBottom"
             />
@@ -126,6 +130,8 @@ onBeforeMount(() => {
     overflow: auto;
     padding: 20px;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .btn-primary {
