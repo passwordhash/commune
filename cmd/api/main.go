@@ -39,7 +39,7 @@ func main() {
 	hub := websocket.NewHub()
 	go hub.Run()
 
-	mongoDB, err := pkgRepo.NewMongoDB(pkgRepo.ConnectURI)
+	mongoDB, err := pkgRepo.NewMongoDB(os.Getenv("MONGO_URI"))
 	if err != nil {
 		logrus.Fatalln("connection to mongo db failed")
 	}

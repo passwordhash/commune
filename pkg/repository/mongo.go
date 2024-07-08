@@ -6,9 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// TODO: move to config
-const ConnectURI = "mongodb://passwordhash:root@localhost:27017/"
-
 func NewMongoDB(uri string) (*mongo.Database, error) {
 	//ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	ctx := context.TODO()
