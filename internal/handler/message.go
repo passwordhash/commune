@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) Create(c *gin.Context) {
@@ -42,7 +43,14 @@ func (h *Handler) GetById(c *gin.Context) {
 }
 
 func (h *Handler) Get(c *gin.Context) {
-	list := h.services.GetList()
+	var list []entity.Message
+
+	additionalQuery := c.Query("additional")
+	isAdditional, _ := strconv.ParseBool(additionalQuery)
+
+	if !isAdditional {
+		list = h.services.GetList()
+	}
 
 	c.JSON(http.StatusOK, list)
 }
