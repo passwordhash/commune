@@ -8,7 +8,7 @@ export const useMessageStore = defineStore('message', () => {
     const messages = ref([])
 
     function fetchMessages(token) {
-        return axios.get(`${baseUrl}/api/list`, {
+        return axios.get(`${baseUrl}/api/message/list?withAdditions=true`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
