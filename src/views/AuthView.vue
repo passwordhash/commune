@@ -18,7 +18,7 @@ const onsubmitLogin = (e) => {
             if (res.status !== 200) {
                 return
             }
-            storeUser.setData(res.data.token, res.data.id)
+            storeUser.setData(res.data.token, res.data.user)
             router.push("/chat")
         }).catch(err => alert(err.response.data.message));
 
@@ -61,60 +61,62 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <body  class="d-flex flex-column min-vh-100">
-    <div class="container container-auth text-center">
-        <div class="title">
-            <i class="fas fa-comments mb-4" style="font-size: 48px; color: var(--primary-color);"></i>
-            <h1 class="mb-4">Commune - общайтесь без границ</h1>
+<!--    <body  class="d-flex flex-column min-vh-100">-->
+    <main>
+        <div class="container container-auth text-center">
+            <div class="title">
+                <i class="fas fa-comments mb-4" style="font-size: 48px; color: var(--primary-color);"></i>
+                <h1 class="mb-4">Commune - общайтесь без границ</h1>
+            </div>
+            <div class="form-wrapper row justify-content-center">
+                <!-- Авторизация -->
+                <Transition>
+                    <form class="form absolute" v-if="isAuth" id="authForm">
+                        <div class="form-group">
+                            <InputForm v-model="email"
+                                       :placeholder="'Ваш email'"/>
+                        </div>
+                        <div class="form-group">
+                            <InputForm v-model="passcode"
+                                       :placeholder="'Парольный код'"/>
+                        </div>
+                        <div class="form-signup">
+                            <p
+                                @click="onlink"
+                                class="form-link unselectable"
+                            >Что такое парольный код? Регистрация</p>
+                        </div>
+                        <button
+                            v-if="loginClickable"
+                            type="submit"
+                            class="btn btn-primary"
+                            @click="onsubmitLogin">Войти</button>
+                        <button v-else class="btn btn-primary" disabled>Войти</button>
+                    </form>
+                </Transition>
+                <!-- Регистрация -->
+                <Transition>
+                    <form class="form absolute" v-if="!isAuth" id="signUpForm">
+                        <div class="form-group">
+                            <InputForm v-model="email"
+                                       :placeholder="'Ваш email'"/>
+                        </div>
+                        <div class="form-group">
+                            <InputForm v-model="nickname"
+                                       :placeholder="'Ваш ник'"/>
+                        </div>
+                        <button
+                            v-if="signUpClickable"
+                            type="submit"
+                            class="btn btn-primary"
+                            @click="onsubmitRegister">Продолжить</button>
+                        <button v-else type="submit" class="btn btn-primary" >Продолжить</button>
+                    </form>
+                </Transition>
+            </div>
         </div>
-        <div class="form-wrapper row justify-content-center">
-            <!-- Авторизация -->
-            <Transition>
-                <form class="form absolute" v-if="isAuth" id="authForm">
-                    <div class="form-group">
-                        <InputForm v-model="email"
-                                   :placeholder="'Ваш email'"/>
-                    </div>
-                    <div class="form-group">
-                        <InputForm v-model="passcode"
-                                   :placeholder="'Парольный код'"/>
-                    </div>
-                    <div class="form-signup">
-                        <p
-                            @click="onlink"
-                            class="form-link unselectable"
-                        >Что такое парольный код? Регистрация</p>
-                    </div>
-                    <button
-                        v-if="loginClickable"
-                        type="submit"
-                        class="btn btn-primary"
-                        @click="onsubmitLogin">Войти</button>
-                    <button v-else class="btn btn-primary" disabled>Войти</button>
-                </form>
-            </Transition>
-            <!-- Регистрация -->
-            <Transition>
-                <form class="form absolute" v-if="!isAuth" id="signUpForm">
-                    <div class="form-group">
-                        <InputForm v-model="email"
-                                   :placeholder="'Ваш email'"/>
-                    </div>
-                    <div class="form-group">
-                        <InputForm v-model="nickname"
-                                   :placeholder="'Ваш ник'"/>
-                    </div>
-                    <button
-                        v-if="signUpClickable"
-                        type="submit"
-                        class="btn btn-primary"
-                        @click="onsubmitRegister">Продолжить</button>
-                    <button v-else type="submit" class="btn btn-primary" >Продолжить</button>
-                </form>
-            </Transition>
-        </div>
-    </div>
-    </body>
+    </main>
+    <!--    </body>-->
 </template>
 
 <style>

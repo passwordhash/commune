@@ -1,21 +1,39 @@
 @import './base.css';
 
+:root {
+    --footer-height: 70px;
+    --chat-header-offset: 30px
+}
+html,body {
+    height: 100%;
+}
+
 body {
-  min-height: 100%;
-  overflow: hidden;
+    /*overflow: hidden;*/
+    overflow-x: hidden;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 1 auto;
 }
 
 .unselectable {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .wordwrap {
-   white-space: pre-wrap;      /* CSS3 */
-   white-space: -moz-pre-wrap; /* Firefox */
-   white-space: -pre-wrap;     /* Opera <7 */
-   white-space: -o-pre-wrap;   /* Opera 7 */
-   word-wrap: break-word;      /* IE */
+    white-space: pre-wrap;      /* CSS3 */
+    white-space: -moz-pre-wrap; /* Firefox */
+    white-space: -pre-wrap;     /* Opera <7 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    word-wrap: break-word;      /* IE */
 }

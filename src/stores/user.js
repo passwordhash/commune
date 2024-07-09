@@ -3,20 +3,30 @@ import {computed, ref, watch} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
 
-const LS_TOKEN = "token"
-const LS_MY_ID = "accountId"
+// const LS_TOKEN = "token"
+// const LS_MY_ID = "accountId"
+const LS_ACCOUNT = "userAccount"
 
 export const useUserStore = defineStore('user', () => {
     const baseUrl = import.meta.env.VITE_API_BASE_DOMAIN
 
-    const token = ref(localStorage.getItem(LS_TOKEN));
-    watch(token, (newToken) => {
-        localStorage.setItem(LS_TOKEN, newToken);
+    // const token = ref(localStorage.getItem(LS_TOKEN));
+    // watch(token, (newToken) => {
+    //     localStorage.setItem(LS_TOKEN, newToken);
+    // })
+    // const accountId = ref(localStorage.getItem(LS_MY_ID));
+    // watch(accountId, (newId) => {
+    //     localStorage.setItem(LS_MY_ID, newId);
+    // })
+    const account = ref(localStorage.getItem(LS_ACCOUNT))
+    watch(account, (newData) => {
+        localStorage.setItem(LS_ACCOUNT, (JSON.stringify(newData)))
     })
-    const accountId = ref(localStorage.getItem(LS_MY_ID));
-    watch(accountId, (newId) => {
-        localStorage.setItem(LS_MY_ID, newId);
-    })
+
+    const getAccount = () => {
+        let accountStr = localStorage.getItem(LS_ACCOUNT)
+        return JSON.parse(accountStr)
+    }
 
     const isAuthenticated = ref(false)
 
@@ -29,12 +39,6 @@ export const useUserStore = defineStore('user', () => {
         })
     }
 
-    function setData(newToken, newMyId) {
-        token.value = newToken
-        accountId.value = newMyId
-        isAuthenticated.value = true
-    }
-
     function register(email, nickname) {
         return axios.post(`${baseUrl}/auth/sign-up`, {
             nickname: nickname,
@@ -43,16 +47,21 @@ export const useUserStore = defineStore('user', () => {
     }
 
     function logout() {
-        localStorage.removeItem(LS_TOKEN)
-        localStorage.removeItem(LS_MY_ID)
+        localStorage.removeItem(LS_ACCOUNT)
 
         isAuthenticated.value = false
         router.push("/")
     }
 
+    function setData(newToken, newUserData) {
+        account.value = newUserData
+        account.value.token = newToken
+        isAuthenticated.value = true
+    }
+
+
     return {
-        token,
-        accountId,
+        getAccount,
         isAuthenticated,
         authorize,
         setData,

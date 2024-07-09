@@ -37,10 +37,7 @@ a {
 }
 .footer {
     background-color: var(--background-color);
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
-    height: 70px;
+    height: var(--footer-height);
 }
 </style>

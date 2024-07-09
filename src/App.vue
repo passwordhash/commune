@@ -7,24 +7,20 @@ import {onBeforeMount} from "vue";
 const storeUser = useUserStore()
 
 onBeforeMount(() => {
-    if (storeUser.token != null) {
+    if (storeUser.getAccount().token != null) {
         storeUser.isAuthenticated = true
     }
 })
 
-
-
 </script>
 
 <template>
-    <RouterView>
+        <RouterView>
 
-    </RouterView>
+        </RouterView>
 
-    <Footer />
+        <Footer />
 </template>
 
 <style scoped>
-
-
 </style>

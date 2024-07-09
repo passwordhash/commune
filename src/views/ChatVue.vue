@@ -5,9 +5,11 @@ import Message from "@/components/Message.vue";
 import {useMessageStore} from "@/stores/message.js";
 import {useUserStore} from "@/stores/user.js";
 import router from "@/router/index.js";
+import ChatHeader from "@/components/ChatHeader.vue";
 
 let storeUser = useUserStore()
 let storeMsg = useMessageStore()
+let account = ref({})
 
 const {status, data, send, open, close} = useWebSocket('ws://localhost:8090/ws/chat', {
     autoReconnect: {
@@ -34,7 +36,7 @@ const submit = (e) => {
 
     storeMsg.newMessage({
         text: inputMsg.value
-    }, storeUser.token)
+    }, storeUser.getAccount().token)
         .then((res) => {
             console.log(JSON.stringify(res.data))
             console.log(res.data)
@@ -67,7 +69,9 @@ watch(data, (newVal) => {
     )
 })
 onBeforeMount(() => {
-    let token = storeUser.token
+    account.value = storeUser.getAccount()
+    let token = account.value.token
+
     if (token === null || token === 0) {
         return router.push('/')
     }
@@ -85,39 +89,40 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="container container-chat my-4">
-        <div class="chat-wrapper">
-            <Message v-for="msg in storeMsg.messages"
-                     :key="msg.id"
-                     :msg="msg"
-                     :is-owned="storeUser.accountId === msg.author.id"
-                     :is-last="isLast(msg)"
-                     @mounted="scrollToBottom"
+    <main>
+        <div class="container container-chat mb-4">
+            <ChatHeader
+                :user="account"
             />
-            <div ref="bottom"></div>
-        </div>
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <button @click="submit" class="btn btn-primary" :disabled="!canSend">Отправить</button>
+            <div class="chat-wrapper">
+                <Message v-for="msg in storeMsg.messages"
+                         :key="msg.id"
+                         :msg="msg"
+                         :is-owned="storeUser.getAccount().id === msg.author.id"
+                         :is-last="isLast(msg)"
+                         @mounted="scrollToBottom"
+                />
+                <div ref="bottom"></div>
             </div>
-            <input
-                v-model="inputMsg"
-                @keydown.enter="submit"
-                type="text"
-                class="form-control"
-                placeholder="Ваше сообщение ...">
-
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <button @click="submit" class="btn btn-primary" :disabled="!canSend">Отправить</button>
+                </div>
+                <input
+                    v-model="inputMsg"
+                    @keydown.enter="submit"
+                    type="text"
+                    class="form-control"
+                    placeholder="Ваше сообщение ...">
+            </div>
         </div>
-
-    </div>
+    </main>
 </template>
 
 <style scoped>
-.container-chat {
-    padding-top: 25px;
-}
-
 .chat-wrapper {
+    position: relative;
+    z-index: 1000;
     border: 1px solid #8ccb8f;
     border-radius: 20px;
     background-color: #ddedde;
@@ -151,10 +156,6 @@ onBeforeMount(() => {
 .form-control:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-}
-
-.input-group {
-    float: right;
 }
 
 .form-control, .btn-primary {
