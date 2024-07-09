@@ -59,11 +59,13 @@ let formatMessageTime = computed (() => {
 }
 
 .message-card {
-    background-color: #2C2F33;
+    background-color: #4CAF50;
     color: white;
     padding: 10px;
     border-radius: 15px;
-    width: 38%;
+    //width: 38%;
+    min-width: 20%;
+    max-width: 42%;
     margin: 10px 0;
     position: relative;
 }
@@ -74,7 +76,7 @@ let formatMessageTime = computed (() => {
 }
 
 .username {
-    color: #D081C5;
+    color: #4f6b2d;
     font-weight: bold;
     margin-right: 5px;
 }
@@ -89,6 +91,6 @@ let formatMessageTime = computed (() => {
     bottom: 5px;
     right: 10px;
     font-size: 12px;
-    color: #999;
+    color: #4f6b2d;
 }
 </style>

@@ -30,15 +30,15 @@ const submit = (e) => {
         return
     }
 
-    storeMsg.fetchMessages(storeUser.token)
+    // storeMsg.fetchMessages(storeUser.token)
 
     storeMsg.newMessage({
         text: inputMsg.value
     }, storeUser.token)
-        .then(() => {
-            send(inputMsg.value)
-        })
-        .then(() => {
+        .then((res) => {
+            console.log(JSON.stringify(res.data))
+            console.log(res.data)
+            send(JSON.stringify(res.data))
             inputMsg.value = ""
         })
 }
@@ -62,14 +62,12 @@ const canSend = (computed(() => {
 }))
 
 watch(data, (newVal) => {
-    console.log(newVal)
     storeMsg.addMessage(
         JSON.parse(newVal)
     )
 })
 onBeforeMount(() => {
     let token = storeUser.token
-    console.log("token: ", token)
     if (token === null || token === 0) {
         return router.push('/')
     }
@@ -96,24 +94,21 @@ onBeforeMount(() => {
                      :is-last="isLast(msg)"
                      @mounted="scrollToBottom"
             />
-
-            <!--      <div class="message own-message">-->
-            <!--        <div><small class="text-muted">You, 15:01</small></div>-->
-            <!--        <div class="message-text">I'm fine, thanks!</div>-->
-            <!--      </div>-->
             <div ref="bottom"></div>
         </div>
         <div class="input-group">
+            <div class="input-group-prepend">
+                <button @click="submit" class="btn btn-primary" :disabled="!canSend">Отправить</button>
+            </div>
             <input
                 v-model="inputMsg"
                 @keydown.enter="submit"
                 type="text"
                 class="form-control"
                 placeholder="Ваше сообщение ...">
-            <div class="input-group-append">
-                <button @click="submit" class="btn btn-primary" :disabled="!canSend">Отправить</button>
-            </div>
+
         </div>
+
     </div>
 </template>
 
@@ -123,15 +118,16 @@ onBeforeMount(() => {
 }
 
 .chat-wrapper {
-    border: 1px solid #4CAF50;
+    border: 1px solid #8ccb8f;
     border-radius: 20px;
-    background-color: #C8E6C9;
-    height: 60vh;
+    background-color: #ddedde;
+    height: 70vh;
     overflow: auto;
     padding: 20px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+    align-items: start;
 }
 
 .btn-primary {
@@ -149,7 +145,7 @@ onBeforeMount(() => {
     border-color: #4CAF50;
     margin-bottom: 10px;
     height: 50px;
-    max-width: 400px;
+    width: 50%;
 }
 
 .form-control:focus {
@@ -158,7 +154,6 @@ onBeforeMount(() => {
 }
 
 .input-group {
-    max-width: 400px;
     float: right;
 }
 
