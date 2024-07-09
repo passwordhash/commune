@@ -126,7 +126,7 @@ func (s *UserService) Authenticate(credentials entity.UserAuth) (entity.AuthData
 		return entity.AuthData{}, err
 	}
 
-	return entity.AuthData{ID: user.ID, Token: token}, nil
+	return entity.AuthData{Token: token, User: *entity.NewUserResponse(user)}, nil
 }
 
 type tokenClaims struct {

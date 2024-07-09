@@ -35,9 +35,18 @@ type UserResponse struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+func NewUserResponse(user User) *UserResponse {
+	return &UserResponse{
+		ID:        user.ID,
+		Nickname:  user.Nickname,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt.Time(),
+	}
+}
+
 type AuthData struct {
 	Token JWTToken
-	ID    ObjectID
+	User  UserResponse
 }
 
 type JWTToken string
