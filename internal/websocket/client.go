@@ -2,10 +2,7 @@ package websocket
 
 import (
 	"bytes"
-	"commune/internal/entity"
 	"commune/internal/service"
-	"encoding/json"
-	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -78,22 +75,23 @@ func (s *Subscription) readPump(service service.Service) {
 		}
 
 		readed = bytes.TrimSpace(bytes.Replace(readed, newline, space, -1))
-		fmt.Println(string(readed))
 
-		ms := entity.NewMessage(string(readed), "")
+		// Старая версия: сообщение отправляется сокету и сохраняется в бд
+		//ms := entity.NewMessage(string(readed), "")
 
 		//if _, err = service.Create(m); err != nil {
 		//	logrus.Errorln(err)
 		//	return
 		//}
 
-		marshaledMsg, err := json.Marshal(ms)
-		if err != nil {
-			logrus.Error(err)
-			return
-		}
+		//marshaledMsg, err := json.Marshal(readed)
+		//if err != nil {
+		//	logrus.Error(err)
+		//	return
+		//}
 
-		message := Message{marshaledMsg, s.room}
+		//message := Message{marshaledMsg, s.room}
+		message := Message{readed, s.room}
 
 		c.hub.broadcast <- message
 	}
