@@ -40,11 +40,11 @@ let formatMessageTime = computed (() => {
     <div class="message-card"
          :class="{'own-message': props.isOwned}"
     >
-        <div class="message-header">
+        <div v-if="!isOwned" class="message-header">
             <span class="username">{{ msg.author.nickname }}</span>
         </div>
         <div class="message-content">
-            <p>{{ msg.text }}</p>
+            <p class="wordwrap">{{ msg.text }}</p>
         </div>
         <div class="message-time">
             {{ formatMessageTime }}
@@ -59,15 +59,19 @@ let formatMessageTime = computed (() => {
 }
 
 .message-card {
-    background-color: #4CAF50;
+    background-color: #6c757d;
     color: white;
     padding: 10px;
     border-radius: 15px;
-    //width: 38%;
     min-width: 20%;
     max-width: 42%;
     margin: 10px 0;
     position: relative;
+}
+
+.message-card.own-message {
+   background-color: #4CAF50;
+    color: #B0B7BE;
 }
 
 .message-header {
@@ -76,13 +80,16 @@ let formatMessageTime = computed (() => {
 }
 
 .username {
-    color: #4f6b2d;
+    font-size: 14px;
+    color: #B0B7BE;
     font-weight: bold;
     margin-right: 5px;
 }
 
 .message-content {
-    margin: 5px 0;
+    color: #f8f8f8 !important;
+    font-size: 16px;
+    margin-bottom: 3px;
 }
 
 .message-time {
@@ -91,6 +98,6 @@ let formatMessageTime = computed (() => {
     bottom: 5px;
     right: 10px;
     font-size: 12px;
-    color: #4f6b2d;
+    color: #f8f8f8 !important;
 }
 </style>
