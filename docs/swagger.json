@@ -254,7 +254,17 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OKMessageResponse"
+                                    "$ref": "#/components/schemas/MessageWithAuthor"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid author ID or auth token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
                                 }
                             }
                         }
@@ -313,6 +323,28 @@
     },
     "components": {
         "schemas": {
+            "User":{
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "2c5ba38d-b0f0-4389-ae75-78ba6fbe6dda"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "MyNickName2000"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "my@email.com"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-07-02T18:59:48.341Z",
+                        "format": "date-time"
+                    }
+                }
+            },
             "UserSignUp": {
                 "required": [
                     "email",
@@ -424,6 +456,28 @@
                     "author_id":{
                         "type": "string",
                         "example": "2c5ba38d-b0f0-4389-ae75-78ba6fbe6dda"
+                    }
+                }
+            },
+            "MessageWithAuthor": {
+                "description": "Message from user",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "2c5ba38d-b0f0-4389-ae75-78ba6fbe6dda"
+                    },
+                    "text": {
+                        "type": "string",
+                        "example": "Hello"
+                    },
+                    "date": {
+                        "type": "string",
+                        "example": "2024-07-02T18:59:48.341Z",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/User"
                     }
                 }
             }

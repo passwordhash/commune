@@ -21,11 +21,29 @@ func (s *MessageService) GetListWithAdditions() ([]entity.Message, error) {
 	return s.msgRepo.GetListWithAuthors()
 }
 
+func (s *MessageService) GetWithAuthor(ID entity.ObjectID) (entity.Message, error) {
+	return s.msgRepo.GetWithAuthor(ID)
+}
+
 func (s *MessageService) Get(ID entity.ObjectID) (entity.Message, error) {
 	return s.msgRepo.Get(ID)
 }
 
-func (s *MessageService) Create(m entity.MessageCreate, authorID entity.ObjectID) (entity.ObjectID, error) {
+// TODO: shit code
+func (s *MessageService) Create(m entity.MessageCreate, authorID entity.ObjectID) (entity.Message, error) {
 	msg := entity.NewMessage(m.Text, authorID)
-	return s.msgRepo.Create(msg)
+	_, err := s.msgRepo.Create(msg)
+	if err != nil {
+		return msg, err
+	}
+
+	// добавляем автора к новому сообщению
+	msgTmp, err := s.msgRepo.GetWithAuthor(msg.ID)
+	if err != nil {
+		return msg, err
+	}
+	msg.Author = msgTmp.Author
+	msg.AuthorID = ""
+
+	return msg, nil
 }

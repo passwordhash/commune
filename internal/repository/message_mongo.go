@@ -35,6 +35,46 @@ func (r *MessageRepository) Get(ID entity.ObjectID) (entity.Message, error) {
 	return message, nil
 }
 
+func (r *MessageRepository) GetWithAuthor(ID entity.ObjectID) (entity.Message, error) {
+	var msg entity.Message
+
+	pipeline := mongo.Pipeline{
+		{{"$match", bson.D{
+			{"_id", ID},
+		}}},
+		{{"$lookup", bson.D{
+			{"from", "user"},
+			{"localField", "author_id"},
+			{"foreignField", "_id"},
+			{"as", "author"},
+		}}},
+		{{"$unwind", bson.D{
+			{"path", "$author"},
+			{"preserveNullAndEmptyArrays", true},
+		}}},
+	}
+
+	cur, err := messageCollection(r.db).Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return msg, err
+	}
+	defer cur.Close(context.TODO())
+
+	for cur.Next(context.TODO()) {
+		var msg entity.Message
+
+		//if err := cur.Decode(&msg); err != nil {
+		//	logrus.Error(err)
+		//	return msg, err
+		//}
+		err := cur.Decode(&msg)
+		return msg, err
+	}
+
+	// TODO: custom error: no messages
+	return msg, err
+}
+
 func (r *MessageRepository) GetList() []entity.Message {
 	var list []entity.Message
 

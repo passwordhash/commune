@@ -12,6 +12,7 @@ const withAdditionsQueryP = "withAdditions"
 
 func (h *Handler) Create(c *gin.Context) {
 	var input entity.MessageCreate
+	var output entity.Message
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
@@ -24,12 +25,14 @@ func (h *Handler) Create(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, "user is unauthorized")
 		return
 	}
-	if _, err := h.services.Create(input, authorID); err != nil {
+	output, err := h.services.Create(input, authorID)
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponse{"ok"})
+	//c.JSON(http.StatusOK, statusResponse{"ok"})
+	c.JSON(http.StatusOK, output)
 }
 
 func (h *Handler) GetById(c *gin.Context) {
