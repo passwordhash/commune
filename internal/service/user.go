@@ -85,9 +85,10 @@ func (s *UserService) GeneratePasscode() (entity.Passcode, error) {
 	return entity.Passcode(fmt.Sprintf("%x", b)), nil
 }
 
-func (s *UserService) UpdatePasscode(u entity.UserCreate) (entity.Passcode, error) {
+func (s *UserService) UpdatePasscode(u entity.UserEmail) (entity.Passcode, error) {
 	condidate, _ := s.userRepo.GetByEmail(u.Email)
-	if condidate.IsEmpty() || condidate.Nickname != u.Nickname {
+	//if condidate.IsEmpty() || condidate.Nickname != u.Nickname {
+	if condidate.IsEmpty() {
 		return "", UserNotFound
 	}
 

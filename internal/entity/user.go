@@ -23,6 +23,10 @@ type UserCreate struct {
 	Email    string `json:"email" binding:"required"`
 }
 
+type UserEmail struct {
+	Email string `json:"email" binding:"required"`
+}
+
 type UserAuth struct {
 	Email    string   `json:"email" binding:"required"`
 	Passcode Passcode `json:"passcode" binding:"required"`

@@ -131,7 +131,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserSignUp"
+                                "$ref": "#/components/schemas/UserResetPasscode"
                             }
                         }
                     }
@@ -369,6 +369,15 @@
                     },
                     "passcode": {
                         "$ref": "#/components/schemas/Passcode"
+                    }
+                }
+            },
+            "UserResetPasscode": {
+                "required": ["email"],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "$ref": "#/components/schemas/Email"
                     }
                 }
             },

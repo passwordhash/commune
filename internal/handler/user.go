@@ -70,7 +70,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 }
 
 func (h *Handler) ResetPasscode(c *gin.Context) {
-	var input entity.UserCreate
+	var input entity.UserEmail
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
