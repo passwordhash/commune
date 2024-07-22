@@ -7,6 +7,7 @@ import {onBeforeMount} from "vue";
 const storeUser = useUserStore()
 
 onBeforeMount(() => {
+    console.log(storeUser.getAccount())
     if (storeUser.getAccount().token != null) {
         storeUser.isAuthenticated = true
     }

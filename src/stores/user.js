@@ -25,7 +25,11 @@ export const useUserStore = defineStore('user', () => {
 
     const getAccount = () => {
         let accountStr = localStorage.getItem(LS_ACCOUNT)
-        return JSON.parse(accountStr)
+        let account = JSON.parse(accountStr)
+        if (account == null) {
+            return {}
+        }
+        return account
     }
 
     const isAuthenticated = ref(false)
@@ -42,6 +46,12 @@ export const useUserStore = defineStore('user', () => {
     function register(email, nickname) {
         return axios.post(`${baseUrl}/auth/sign-up`, {
             nickname: nickname,
+            email: email
+        })
+    }
+
+    function resetCode(email) {
+        return axios.post(`${baseUrl}/auth/reset`, {
             email: email
         })
     }
@@ -64,8 +74,9 @@ export const useUserStore = defineStore('user', () => {
         getAccount,
         isAuthenticated,
         authorize,
-        setData,
         register,
+        resetCode,
+        setData,
         logout
     }
 })
